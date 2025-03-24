@@ -9,6 +9,7 @@ import Welcome from "./pages/Welcome";
 import Login from "./pages/Login";
 import OTP from "./pages/OTP";
 import Survey from "./pages/Survey";
+import AirlineSelection from "./pages/AirlineSelection";
 import Reward from "./pages/Reward";
 import Feedback from "./pages/Feedback";
 import NotFound from "./pages/NotFound";
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/" element={<Login />} />
             <Route path="/otp" element={<OTP />} />
             <Route path="/survey" element={<Survey />} />
+            <Route path="/airline-selection" element={<AirlineSelection />} />
             <Route path="/reward" element={<Reward />} />
             <Route path="/feedback" element={<Feedback />} />
             <Route path="*" element={<NotFound />} />

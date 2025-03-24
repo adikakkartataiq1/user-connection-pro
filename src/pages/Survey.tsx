@@ -43,8 +43,8 @@ const Survey: React.FC = () => {
       description: "Your survey response has been recorded.",
     });
     
-    // Navigate to reward page
-    navigate('/reward');
+    // Navigate to airline selection page instead of reward page
+    navigate('/airline-selection');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
