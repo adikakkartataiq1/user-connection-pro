@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +15,7 @@ import { useAuth } from '../context/AuthContext';
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  terms: z.boolean().refine(val => val === true, { message: "You must accept the terms" }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -28,6 +30,7 @@ const LoginForm: React.FC = () => {
     defaultValues: {
       email: "",
       password: "",
+      terms: false,
     },
   });
 
@@ -38,11 +41,11 @@ const LoginForm: React.FC = () => {
       
       toast({
         title: "Login successful",
-        description: "Welcome back to the application!",
+        description: "Welcome to the application!",
       });
       
-      // Redirect to survey page on successful login
-      navigate('/survey');
+      // Redirect to OTP page on successful login
+      navigate('/otp');
     } catch (error) {
       toast({
         variant: "destructive",
@@ -53,7 +56,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto glass-panel form-shine">
+    <Card className="w-full max-w-md mx-auto">
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -64,7 +67,7 @@ const LoginForm: React.FC = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="your.email@example.com" {...field} />
+                    <Input placeholder="Tata group company email ID" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,13 +88,34 @@ const LoginForm: React.FC = () => {
               )}
             />
             
-            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            <FormField
+              control={form.control}
+              name="terms"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      I accept the <a href="#" className="underline">Terms & Conditions</a> and <a href="#" className="underline">Privacy Policy</a>
+                    </FormLabel>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+            
+            <Button type="submit" className="w-full rounded-full bg-indigo-900 hover:bg-indigo-800" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? (
                 <span className="loading-dots">
                   Signing in<span>.</span><span>.</span><span>.</span>
                 </span>
               ) : (
-                "Sign In"
+                "Next"
               )}
             </Button>
           </form>

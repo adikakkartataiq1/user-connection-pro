@@ -1,43 +1,109 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoginForm from '../components/LoginForm';
-import Header from '../components/Header';
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { Gift, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Login: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   useEffect(() => {
-    // Redirect to feedback page if already authenticated
     if (isAuthenticated) {
-      navigate('/feedback');
+      navigate('/otp');
     }
   }, [isAuthenticated, navigate]);
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !termsAccepted) return;
+    
+    try {
+      // Mock login - in real app this would validate properly
+      await login(email, 'password123');
+      navigate('/otp');
+    } catch (error) {
+      console.error('Login failed', error);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <Header />
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Header */}
+      <div className="h-20 bg-blue-600 w-full" />
       
-      <div className="container mx-auto px-4 pt-24 pb-12">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="text-center mb-12 animate-fade-in">
-              <h1 className="text-4xl font-bold text-gray-900 mb-3">Welcome Back</h1>
-              <p className="text-gray-600 max-w-md mx-auto">
-                Sign in to continue to the feedback portal
-              </p>
-            </div>
-            
-            <LoginForm />
+      {/* Points Bar */}
+      <div className="bg-white p-4 flex items-center gap-3">
+        <Gift className="text-purple-600 h-6 w-6" />
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-gray-500 font-medium">Earn Survey Points :</span>
+            <span className="font-bold text-purple-700 text-3xl">10</span>
           </div>
+          <Progress value={10} className="h-2 bg-purple-100" />
         </div>
       </div>
       
-      {/* Background decorative elements */}
-      <div className="fixed top-40 left-20 w-64 h-64 bg-primary/5 rounded-full filter blur-3xl animate-pulse opacity-70" />
-      <div className="fixed bottom-20 right-20 w-96 h-96 bg-purple-100/30 rounded-full filter blur-3xl opacity-70" />
+      {/* Login Form */}
+      <div className="flex-grow flex flex-col px-4 py-8">
+        <div className="flex items-center gap-2 mb-8">
+          <User className="text-gray-500" />
+          <h2 className="text-2xl text-gray-500 font-medium">Login / Sign up</h2>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Tata group company email ID"
+            className="p-6 text-lg"
+          />
+          
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="terms" 
+              checked={termsAccepted}
+              onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+            />
+            <label
+              htmlFor="terms"
+              className="text-sm text-gray-500 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              I accept the <a href="#" className="underline">Terms & Conditions</a> and <a href="#" className="underline">Privacy Policy</a>
+            </label>
+          </div>
+          
+          <div className="pt-4">
+            <Button
+              type="submit"
+              className="w-40 bg-indigo-900 hover:bg-indigo-800 mx-auto rounded-full py-6"
+              disabled={!email || !termsAccepted}
+            >
+              Next
+            </Button>
+          </div>
+        </form>
+      </div>
+      
+      {/* Advertisement */}
+      <div className="px-4 py-6">
+        <div className="bg-black rounded-xl text-white p-4 relative">
+          <div className="absolute top-2 left-2 text-xs bg-gray-700 px-2 py-1 rounded">Ad</div>
+          <div className="mt-6">
+            <h3 className="text-xl font-bold">Galaxy S25 Ultra</h3>
+            <p className="text-sm">Galaxy AI ✨</p>
+            <button className="bg-white text-black text-xs px-3 py-1 rounded-full mt-2">
+              Own now
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
